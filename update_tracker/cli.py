@@ -1,4 +1,4 @@
-import click, pdb
+import click
 from update_tracker.local import get_current_package_info, get_updated_package_info, compare_current_and_updated_package_info, make_output
 
 @click.command()
@@ -7,8 +7,7 @@ from update_tracker.local import get_current_package_info, get_updated_package_i
 def track(verbose, level):
     """현재 PC에 설치된 파이썬 패키지의 업데이트 정보를 출력하는 명령어"""
     current_package_info = get_current_package_info()
-    updated_package_info = get_updated_package_info(current_package_info, verbose)
-    result = compare_current_and_updated_package_info(current_package_info, updated_package_info, level, verbose)
-    # pdb.set_trace()
+    updated_package_info = get_updated_package_info(current_package_info)
+    result = compare_current_and_updated_package_info(updated_package_info)
     make_output(result, verbose, level)
     
