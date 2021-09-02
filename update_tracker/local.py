@@ -13,7 +13,7 @@ def get_current_package_info() -> Dict[str, Dict[str, str]]:
 
 def get_updated_package_info(current_package_info: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
     SEARCH_URL = "https://pypi.python.org/pypi/{}/json"
-    
+
     updated_package_info = dict(error=[])
     for package_name, package_data in current_package_info.items():
         result = requests.get(SEARCH_URL.format(package_name))
@@ -46,6 +46,8 @@ def compare_current_and_updated_package_info(updated_package_info: Dict[str, Dic
     return result
 
 def make_output(result: Dict[str, Dict[str, str]], verbose, level) -> None:
-    for level in Level:
-        click.echo(f"{level.name}: {result[level.value - 1].keys()}")
+    for l in Level:
+        click.echo(f"{l.name}: {result[l.value - 1].keys()}")
+        if level == l.name:
+            break
     click.echo(f"error package: {result[-1]}")
