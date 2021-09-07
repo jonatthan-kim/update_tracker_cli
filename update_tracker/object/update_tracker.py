@@ -26,27 +26,30 @@ class UpdateTracker:
     def get_updated_package_info(self):
         SEARCH_URL = "https://pypi.python.org/pypi/{}/json"
         updated_package_info = dict()
-        l = len(self.package_info)
+        package_info_length = len(self.package_info)
 
         click.echo("Fetching the latest package data...")
 
-        printProgressBar(0, l, prefix = 'Progress:', suffix = '', length = 40)
-        for i, (package_name, package_data) in enumerate(self.package_info.items(), start=1):
-            printProgressBar(i, l, prefix = 'Progress:', suffix = '', length = 40)
-
+        printProgressBar(0, package_info_length,)
+        for idx, (package_name, package_data) in enumerate(self.package_info.items(), start=1):
             result = requests.get(SEARCH_URL.format(package_name))
             
             try:
                 if result.status_code != 200:
-                    raise ValueError('response is not 200')
+                    raise ValueError('package not found in PyPI')  # 에러의 종류 좀 더 생각해보기
                 result_json = result.json()
                 updated_package_info[package_name] = PackageData(
                     **package_data,
                     updated_version = result_json["info"]["version"],
                     upload_time = result_json["releases"][result_json["info"]["version"]][0]["upload_time"]
                 )
+            except IndexError:
+                self.error[package_name] = f"wrong info format. check on {SEARCH_URL.format(package_name)}"
             except Exception as e:
                 self.error[package_name] = str(e)
+            finally:
+                printProgressBar(idx, package_info_length)
+
 
         self.package_info = updated_package_info
 

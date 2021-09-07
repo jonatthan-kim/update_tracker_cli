@@ -1,5 +1,5 @@
 import click
-from update_tracker.utils import Level
+from update_tracker.utils import Level, PackageData
 
 class Printer():
     def __init__(self, verbose, level) -> None:
@@ -13,15 +13,24 @@ class Printer():
             self.print_error(error)      
     
     def print_package_report(self, result) -> None:
+        HEADER = """\n\n[REPORT]\n""" + "-" * 80
+        FORMAT = "{:<20}" * (len(PackageData._fields) + 1)
+        click.echo(HEADER)
         for l in Level:
-            click.echo(f"{l.name}: {result[l.value - 1].keys()}")
+            if result[l.value - 1]:
+                click.echo(f"**{l.name}**")
+                click.echo(FORMAT.format('package_name', *PackageData._fields))
+                for package_name, package_data in result[l.value - 1].items():
+                    click.echo(FORMAT.format(package_name, *package_data))
+
             if self.level == l.name:
                 break
     
     def print_error(self, error) -> None:
-        HEADER = """[ERROR]\n--------------------------"""
-        FORMAT = "{:<15} {:<40}"
+        HEADER = """\n**ERROR**"""
+        FORMAT = "{:<20} {:<40}"
         click.echo(HEADER)
         click.echo(FORMAT.format('package_name', 'error_reason')) 
         for package_name, error_reason in error.items():
             click.echo(FORMAT.format(package_name, error_reason)) 
+        click.echo("-" * 80)
