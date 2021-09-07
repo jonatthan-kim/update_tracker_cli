@@ -1,5 +1,5 @@
-import subprocess, requests, pdb
-from update_tracker.utils import Level, PackageData
+import subprocess, requests, click, logging
+from update_tracker.utils import Level, PackageData, printProgressBar
 from update_tracker.object.printer import Printer
 
 class UpdateTracker:
@@ -25,9 +25,15 @@ class UpdateTracker:
 
     def get_updated_package_info(self):
         SEARCH_URL = "https://pypi.python.org/pypi/{}/json"
-
         updated_package_info = dict()
-        for package_name, package_data in self.package_info.items():
+        l = len(self.package_info)
+
+        click.echo("Fetching the latest package data...")
+
+        printProgressBar(0, l, prefix = 'Progress:', suffix = '', length = 40)
+        for i, (package_name, package_data) in enumerate(self.package_info.items(), start=1):
+            printProgressBar(i, l, prefix = 'Progress:', suffix = '', length = 40)
+
             result = requests.get(SEARCH_URL.format(package_name))
             
             try:
