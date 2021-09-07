@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'Click',
-        'requests'  # 이건 나중에 더 생각해보기
+        'requests'
     ],
     entry_points={
         "console_scripts": [
