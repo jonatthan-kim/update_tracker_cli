@@ -1,9 +1,15 @@
 from setuptools import setup, find_packages
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='update_tracker',
-    version='0.0.1',
+    version='0.0.2',
     description='tracking update of python packages or library',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Jinoh Kim',
     author_email='juju08217@daum.net',
     url='https://github.com/Independent-Dev',
