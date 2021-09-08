@@ -26,7 +26,7 @@ class Printer():
                         click.echo(FORMAT.format(package_name, *package_data))
 
                 else:
-                    click.echo(f"{level.name}: {result[result_level].keys()}")
+                    click.echo(f"{level.name}: {[name for name in result[result_level].keys()]}")
 
             if self.level == level.name:
                 break
@@ -45,4 +45,4 @@ class Printer():
             click.echo("-" * 80)
 
         else:
-            click.echo(f"error: {error.keys()}")
+            click.echo(f"\nERROR: {[name for name in error.keys()]}")

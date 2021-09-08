@@ -1,9 +1,4 @@
 import click
-from update_tracker.local import (get_current_package_info, 
-    get_updated_package_info, 
-    compare_current_and_updated_package_info, 
-    make_output
-)
 from update_tracker.utils import Level
 from update_tracker.object.update_tracker import UpdateTracker
 

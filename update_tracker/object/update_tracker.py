@@ -36,15 +36,16 @@ class UpdateTracker:
             
             try:
                 if result.status_code != 200:
-                    raise ValueError('package not found in PyPI')  # 에러의 종류 좀 더 생각해보기
+                    raise ValueError('Package not found in PyPI')  # 에러의 종류 좀 더 생각해보기
                 result_json = result.json()
+                updated_version = result_json["info"]["version"]
                 updated_package_info[package_name] = PackageData(
                     **package_data,
-                    updated_version = result_json["info"]["version"],
-                    upload_time = result_json["releases"][result_json["info"]["version"]][0]["upload_time"]
+                    updated_version = updated_version,
+                    upload_time = result_json["releases"][updated_version][0]["upload_time"].replace("T", " ")
                 )
             except IndexError:
-                self.error[package_name] = f"wrong info format. check on {SEARCH_URL.format(package_name)}"
+                self.error[package_name] = f"Unknown info format. Check on {SEARCH_URL.format(package_name)}"
             except Exception as e:
                 self.error[package_name] = str(e)
             finally:
