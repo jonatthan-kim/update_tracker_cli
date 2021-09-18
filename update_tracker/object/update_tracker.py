@@ -1,12 +1,12 @@
-import subprocess, requests, click, logging
-from update_tracker.utils import Level, PackageData, printProgressBar
+import subprocess, requests, click
+from update_tracker.utils import Level, PackageData, printProgressBar, from_utc_to_local
 from update_tracker.object.printer import Printer
 
 class UpdateTracker:
-    def __init__(self, verbose: bool, level: str, printer: Printer = None) -> None:
-        self.verbose = verbose
+    def __init__(self, summary: bool, level: str, printer: Printer = None) -> None:
+        self.summary = summary
         self.level = level
-        self.printer = printer or Printer(verbose, level)
+        self.printer = printer or Printer(summary, level)
 
         self.package_info = dict()
         self.error = dict()
@@ -39,10 +39,11 @@ class UpdateTracker:
                     raise ValueError('Package not found in PyPI')  # 에러의 종류 좀 더 생각해보기
                 result_json = result.json()
                 updated_version = result_json["info"]["version"]
+                upload_time = result_json["releases"][updated_version][0]["upload_time"].replace("T", " ")
                 updated_package_info[package_name] = PackageData(
                     **package_data,
                     updated_version = updated_version,
-                    upload_time = result_json["releases"][updated_version][0]["upload_time"].replace("T", " ")
+                    upload_time = from_utc_to_local(upload_time)
                 )
             except IndexError:
                 self.error[package_name] = f"Unknown info format. Check on {SEARCH_URL.format(package_name)}"

@@ -2,8 +2,8 @@ import click
 from update_tracker.utils import Level, PackageData
 
 class Printer():
-    def __init__(self, verbose, level) -> None:
-        self.verbose = verbose
+    def __init__(self, summary, level) -> None:
+        self.summary = summary
         self.level = level
 
     def make_output(self, result, error) -> None:
@@ -18,8 +18,8 @@ class Printer():
         for level in Level:
             result_level = level.value - 1
             if result[result_level]:
-                if self.verbose:
-                    click.echo(f"**{level.name}**")
+                if not self.summary:
+                    click.echo(f"**{level.name} 업데이트가 이미 진행된 패키지입니다!**")
                     click.echo(FORMAT.format('package_name', *PackageData._fields))
                     
                     for package_name, package_data in result[result_level].items():
@@ -27,12 +27,13 @@ class Printer():
 
                 else:
                     click.echo(f"{level.name}: {[name for name in result[result_level].keys()]}")
+                click.echo()
 
             if self.level == level.name:
                 break
     
     def print_error(self, error) -> None:
-        if self.verbose:
+        if not self.summary:
             HEADER = """\n**ERROR**"""
             FORMAT = "{:<20} {:<40}"
             
